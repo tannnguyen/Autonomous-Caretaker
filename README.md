@@ -5,7 +5,7 @@ Autonomous Caretaker is the final project for class 530.420 Mechatronics in Spri
 ## Mission
 Given a hypothetical situation in the future where everyone has a supporting robot with them. An elderly human is sleeping on the beach and forgets to put off the campfire. The robot needs to recognize the fire, alert the elders to wake up, collect the water, put off the fire, and then bring some water back to the elderly. 
 
-## Approaches
+## Approach
 For our robot, we plan to build a 2-story robot where it can store water in a syringe system at the bottom and all the control system is on top. We use 2 Arduinos, each controls a story within the robot. To support this robot, we use a 4-wheel robot for stability, Pixy for color and object recognition, various types of motors to control different moving components in the robot.
 
 Our steps to solve the problems:
@@ -32,17 +32,23 @@ Our steps to solve the problems:
 Please refer to Code/ and Parts/ folders to see and download our codes and design. Refer to Parts.md for our parts
 
 This is our mechanical design:
+<p>
+<img src="https://github.com/tannnguyen/Autonomous-Caretaker/blob/master/Photos_and_Videos/mechanical.png">
+</p>
 
 This is our circuit:
-
+<p>
+<img src="https://github.com/tannnguyen/Autonomous-Caretaker/blob/master/Photos_and_Videos/circuit.png">
+</p>
 This is our final robot:
-
+<p>
+<img src="https://github.com/tannnguyen/Autonomous-Caretaker/blob/master/Photos_and_Videos/robot1.jpeg">
+<img src="https://github.com/tannnguyen/Autonomous-Caretaker/blob/master/Photos_and_Videos/robot2.jpeg">
+</p>
 
 ## Demo
-* Challenge 1:
-
-* Challenge 2:
-
+* Challenge 1: Please refer to this [video](https://github.com/tannnguyen/Autonomous-Caretaker/blob/master/Photos_and_Videos/challenge1_robot.mp4)
+* Challenge 2:Please refer to this [video](https://github.com/tannnguyen/Autonomous-Caretaker/blob/master/Photos_and_Videos/challenge2.mp4)
 * We did not have a chance to take video of our final demo with complete steps...
 
 ## Technology
@@ -56,5 +62,5 @@ This is our final robot:
 * Mona Gao
 
 ## Acknowledgement
-* A lot of help and support from Morris Kracer, Ethan Tang, Joseph Pan, and Paola Donis
+* A lot of help and support from Morris Kraicer, Ethan Tang, Joseph Pan, and Paola Donis
 * A lot of guidance from Professor Charbel Rizk
