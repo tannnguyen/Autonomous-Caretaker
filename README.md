@@ -48,7 +48,7 @@ This is our final robot:
 </p>
 
 ## Demo
-* Challenge 1: Please refer to this [video1](https://github.com/tannnguyen/Autonomous-Caretaker/blob/master/Photos_and_Videos/challenge1_robot.mp4)[video2](https://github.com/tannnguyen/Autonomous-Caretaker/blob/master/Photos_and_Videos/elderly.mp4)
+* Challenge 1: Please refer to this [video1](https://github.com/tannnguyen/Autonomous-Caretaker/blob/master/Photos_and_Videos/challenge1_robot.mp4) [video2](https://github.com/tannnguyen/Autonomous-Caretaker/blob/master/Photos_and_Videos/elderly.mp4)
 * Challenge 2:Please refer to this [video](https://github.com/tannnguyen/Autonomous-Caretaker/blob/master/Photos_and_Videos/challenge2.mp4)
 * We did not have a chance to take video of our final demo with complete steps...
 
