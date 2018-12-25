@@ -1,3 +1,11 @@
+/**
+ * Code for the main control system of the robot
+ * 
+ * It will control almost everything in the 2-story robot and execute the tasks
+ * steps by steps. Refer to the README documents for the steps and the comments
+ * below to see the execution works
+ **/
+
 #include <Wire.h>
 #include <Adafruit_MotorShield.h>
 #include "utility/Adafruit_MS_PWMServoDriver.h"
@@ -21,40 +29,36 @@
 #define in2 41
 #define in3 42
 #define in4 40
+
 /*
    Decode for motors:
    Left syringe is 45 43 41 with 41 HIGH means Pull
    Right syringe is 44 42 40 with 42 HIGH means Pull
 */
 
-// Create the motor shield object with the default I2C address
+// Create the motor shield object
 Adafruit_MotorShield AFMS = Adafruit_MotorShield();
-
-// Select which 'port' M1, M2, M3 or M4. In this case, M1
 Adafruit_DCMotor *leftFrontMotor = AFMS.getMotor(3);
-// You can also make another motor on port M2
 Adafruit_DCMotor *rightFrontMotor = AFMS.getMotor(2);
 Adafruit_DCMotor *rightBackMotor = AFMS.getMotor(1);
 Adafruit_DCMotor *leftBackMotor = AFMS.getMotor(4);
 
+// Initialize Pixy object
 Pixy pixy;
 
 //put all the variables here!
 int color_fire = -1;
 int color_elderly = -1;
 int color_water = -1;
-
 uint16_t blocks;
 int x = -1;
 int area = -1;
 int height = -1;
-// stores horizontal distance of object in Pixy camera
 
 void setup() {
-  // put your setup code here, to run once:
-  AFMS.begin(); // create with default frequency 1.6KHz or pass hz value in function
+  // Initialize variables here
+  AFMS.begin();
   pixy.init();
-  Serial.begin(9600);
   pinMode(siren, OUTPUT);
   pinMode(enA, OUTPUT);
   pinMode(enB, OUTPUT);
@@ -81,11 +85,9 @@ void loop() {
   */
 
   // Step 1: Looking for red
-
   color_fire = -1;
   while (color_fire == -1) {
     rotateLeft(rotateSpeed);
-    Serial.println("Looking for fire");
     blocks = pixy.getBlocks();
     // The blocks need to be red. Signature 1.
     if (blocks) {
@@ -96,7 +98,6 @@ void loop() {
       }
     }
   }
-  Serial.println("I found red here");
   // Step 1.5: Checking for the ping to make sure that we are allowed to go
   long distance = measureDistance();
   // Check if we will get stuck as we find the elderly or not
@@ -105,7 +106,6 @@ void loop() {
     color_water = -1;
     while (color_water == -1) {
       rotateLeft(rotateSpeed);
-      Serial.println("Looking for the water");
       blocks = pixy.getBlocks();
       if (blocks) {
         for (int j = 0; j < blocks; j++) {
@@ -143,7 +143,6 @@ void loop() {
   while (color_elderly == -1) {
     // Need to pan to search for the robot
     rotateRight(rotateSpeed);
-    Serial.println("Looking for the elderly");
     // Use Pixy to search for the robot
     blocks = pixy.getBlocks();
     // The blocks need to be green. Signature 3.
@@ -161,7 +160,6 @@ void loop() {
   // Stop the robot and ready to center with the elderly.
   forward(0);
   delay(50);
-  Serial.println("I found the elderly");
   // Step 3: Move towards the elderly (at a 12in distance)
   while (height < 80) {
     if (x < 160) {
@@ -175,7 +173,6 @@ void loop() {
     if (blocks) {
       color_elderly = -1;
       for (int j = 0; j < blocks; j++) {
-        Serial.println("Moving towards the elderly right now");
         // If there is noise in the environment, check for the largest object
         if (pixy.blocks[j].signature == 3) {
           color_elderly = j;
@@ -189,7 +186,6 @@ void loop() {
   //Stop the robot
   forward(0);
   delay(50);
-  Serial.println("I found the elderly");
   // Step 4: Turn on the siren
   digitalWrite(siren, HIGH);
   delay(3000);
@@ -198,16 +194,17 @@ void loop() {
   backward(200);
   delay(500);
 
-
-  //       Challenge 2:
-  //        Step 1: Identify where the water is
-  //        Step 2: Move to the water.
-  //        Step 3: Pick up the water. (Send the signal to the other Arduino)
-  //        Step 4: Move back a bit, look for the fire
-  //        Step 5: Go to the fire.
-  //        Step 6: Distribute the water (send the signal to the Arduino)
-  //        Step 7: Go to the elderly.
-  //        Step 8: Distribute the water to the elderly.
+  /*
+    Challenge 2:
+      Step 1: Identify where the water is
+      Step 2: Move to the water.
+      Step 3: Pick up the water. (Send the signal to the other Arduino)
+      Step 4: Move back a bit, look for the fire
+      Step 5: Go to the fire.
+      Step 6: Distribute the water (send the signal to the Arduino)
+      Step 7: Go to the elderly.
+      Step 8: Distribute the water to the elderly.
+  */
 
   // Step 1: Identify where the water is
   area = -1;
@@ -217,7 +214,6 @@ void loop() {
   delay(1000);
   while (color_water == -1) {
     rotateLeft(rotateSpeed);
-    Serial.println("Looking for the water");
     blocks = pixy.getBlocks();
     if (blocks) {
       for (int j = 0; j < blocks; j++) {
@@ -229,7 +225,6 @@ void loop() {
       }
     }
   }
-  Serial.println("I found the water here");
   // Found the water here.
   // Step 2: Move towards the water
   // Stop at certain area. Need to change this threshold here!
@@ -241,7 +236,6 @@ void loop() {
       //water on the right of rescue robot
       turnForward(190, 100);
     }
-    Serial.println("Moving towards the water");
     blocks = pixy.getBlocks();
     if (blocks) {
       for (int j = 0; j < blocks; j++) {
@@ -257,7 +251,6 @@ void loop() {
   // Move to the edge of the water.
   forward(0);
   delay(50);
-  Serial.println("Moving slowly to the water");
   turnForward(200, 170);
   delay(1000);
   forward(0);
@@ -272,7 +265,6 @@ void loop() {
   height = 0;
   color_fire = -1;
   while (color_fire == -1) {
-    Serial.println("I am looking for the fire");
     // Need to pan to search for the robot
     rotateRight(rotateSpeed);
     // Use Pixy to search for the robot
@@ -301,7 +293,6 @@ void loop() {
       //elderly on the right of rescue robot
       turnForward(150, 100);
     }
-    Serial.println("Moving towards the fire");
     blocks = pixy.getBlocks();
     if (blocks) {
       for (int j = 0; j < blocks; j++) {
@@ -314,13 +305,12 @@ void loop() {
     }
   }
   // In the fire area. Go to the fire.
-
   forward(0);
   delay(100);
   forward(200);
   delay(200);
   forward(0);
-  Serial.println("Moving slowly towards the fire");
+
   while (x > 100) {
     rotateLeft(130);
     blocks = pixy.getBlocks();
@@ -348,12 +338,10 @@ void loop() {
   while (color_elderly == -1) {
     // Need to pan to search for the robot
     rotateRight(rotateSpeed);
-    Serial.println("Looking for the elderly");
     // Use Pixy to search for the robot
     blocks = pixy.getBlocks();
     // The blocks need to be green. Signature 3.
     if (blocks) {
-      Serial.println("I can find blocks");
       for (int j = 0; j < blocks; j++) {
         // If there is noise in the environment, check for the largest object
         if (pixy.blocks[j].signature == 3) {
@@ -378,7 +366,6 @@ void loop() {
       //elderly on the right of rescue robot
       turnForward(150, 100);
     }
-    Serial.println("I am running towards the elderly");
     blocks = pixy.getBlocks();
     if (blocks) {
       for (int j = 0; j < blocks; j++) {
@@ -395,7 +382,6 @@ void loop() {
   // Step 9: Distribute the water to the elderly
   forward(0);
   delay(50);
-  Serial.println("Going slowly towards the elderly");
   forward(100);
   delay(300);
   while (x < 150) {
@@ -421,6 +407,7 @@ void loop() {
   delay(100000000);
 }
 
+// Move forward
 void forward(int i) {
   leftFrontMotor->setSpeed(i);
   leftFrontMotor->run(FORWARD);
@@ -432,7 +419,7 @@ void forward(int i) {
   rightFrontMotor->run(FORWARD);
 }
 
-
+// Move backward
 void backward(int i) {
   leftFrontMotor->setSpeed(i);
   leftFrontMotor->run(BACKWARD);
@@ -444,8 +431,7 @@ void backward(int i) {
   rightFrontMotor->run(BACKWARD);
 }
 
-// when lm > rm, right turn
-// when rm > lm, left turn
+// Turn left or right forward
 void turnForward(int lm, int rm) {
   leftFrontMotor->setSpeed(lm);
   leftFrontMotor->run(FORWARD);
@@ -457,6 +443,7 @@ void turnForward(int lm, int rm) {
   rightFrontMotor->run(FORWARD);
 }
 
+// Turn left or right backward
 void turnBackward(int lm, int rm) {
   leftFrontMotor->setSpeed(lm);
   leftFrontMotor->run(BACKWARD);
@@ -469,6 +456,7 @@ void turnBackward(int lm, int rm) {
 
 }
 
+// Rotate around to the left
 void rotateLeft(int i) {
   leftFrontMotor->setSpeed(i);
   leftFrontMotor->run(FORWARD);
@@ -481,6 +469,7 @@ void rotateLeft(int i) {
 
 }
 
+// Rotate around to the right
 void rotateRight(int i) {
   leftFrontMotor->setSpeed(i);
   leftFrontMotor->run(BACKWARD);
@@ -492,6 +481,7 @@ void rotateRight(int i) {
   rightFrontMotor->run(FORWARD);
 }
 
+// Control the motor to suck in water
 void pullWater() {
   // Servo so the hose goes down
   digitalWrite(signalPin, HIGH);
@@ -512,6 +502,7 @@ void pullWater() {
   digitalWrite(signalPin, LOW);
 }
 
+// Control the left servo to push water out
 void pushLeft() {
   // Push the left motor out
   analogWrite(enB, 200);
@@ -524,11 +515,12 @@ void pushLeft() {
   // Put servo up
 }
 
+// Control the right servo to push water out
 void pushRight() {
   // Push the right motor out
   digitalWrite(in4, HIGH);
   delay(water);
-
+  
   // Stop pushing now
   digitalWrite(in4, LOW);
 }
@@ -536,18 +528,14 @@ void pushRight() {
 //For each ultrasound sensor pin to send the signal
 long measureDistance() {
   long duration, cm;
-
   pinMode(ping, OUTPUT);
-
   digitalWrite(ping, LOW);
   delayMicroseconds(5);
   digitalWrite(ping, HIGH);
   delayMicroseconds(5);
   digitalWrite(ping, LOW);
-
   pinMode(ping, INPUT);
   duration = pulseIn(pin, HIGH);
-
   cm = microseconds / 29 / 2;
   return cm;
 }
