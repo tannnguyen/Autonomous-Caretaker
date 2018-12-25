@@ -29,16 +29,21 @@ Our steps to solve the problems:
     Step 13: Distribute the water to the elderly.
   
 ## Code, Design, and Circuit
-Please refer to Code/ and Parts/ folders to see and download our codes and design. 
+Please refer to Code/ and Parts/ folders to see and download our codes and design. Refer to Parts.md for our parts
+
+This is our mechanical design:
 
 This is our circuit:
-
 
 This is our final robot:
 
 
-
 ## Demo
+* Challenge 1:
+
+* Challenge 2:
+
+* We did not have a chance to take video of our final demo with complete steps...
 
 ## Technology
 * Ardunio and its libraries
@@ -51,5 +56,5 @@ This is our final robot:
 * Mona Gao
 
 ## Acknowledgement
-* A lot of help and support from Morris Kracer, Ethan Tang, Joseph Pan, and 
+* A lot of help and support from Morris Kracer, Ethan Tang, Joseph Pan, and Paola Donis
 * A lot of guidance from Professor Charbel Rizk
